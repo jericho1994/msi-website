@@ -1,26 +1,199 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-outfit);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  /* Heat — from the flame in the logo */
+  --color-fire-300: #ffb35c;
+  --color-fire-400: #f7941d;
+  --color-fire-500: #f26a21;
+  --color-fire-600: #e04a1b;
+
+  /* Cold — from the ice crystal in the logo */
+  --color-ice-200: #bfe6fb;
+  --color-ice-300: #7cc8f2;
+  --color-ice-400: #3fa9ec;
+  --color-ice-500: #1e88e5;
+  --color-ice-600: #1565c0;
+
+  /* Deep navy for dark sections */
+  --color-navy-800: #12294a;
+  --color-navy-900: #0b1f3a;
+  --color-navy-950: #061428;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+/* Hot-to-cold gradient; the point where heat meets cold slowly slides back and forth */
+.text-heat-cool,
+.bg-heat-cool {
+  background-size: 150% 100%;
+  animation: gradient-shift 7s ease-in-out infinite alternate;
+}
+
+.text-heat-cool {
+  background-image: linear-gradient(90deg, var(--color-fire-500), var(--color-fire-400) 30%, var(--color-ice-400) 70%, var(--color-ice-500));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.bg-heat-cool {
+  background-image: linear-gradient(90deg, var(--color-fire-600), var(--color-fire-400) 30%, var(--color-ice-400) 70%, var(--color-ice-600));
+}
+
+@keyframes gradient-shift {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+
+/* Emblem bob */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Hero entrance */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes emblem-pop {
+  from { opacity: 0; transform: scale(0.7) rotate(-8deg); }
+  to { opacity: 1; transform: none; }
+}
+
+.hero-in {
+  animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+
+.emblem-in {
+  animation: emblem-pop 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s both;
+}
+
+/* Scroll reveal (see Reveal.tsx): visible unless the script marks it pending */
+.reveal {
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--delay, 0ms);
+}
+
+.reveal[data-pending]:not([data-visible]) {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+/* Living glows */
+@keyframes glow-drift-a {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+  50% { transform: translate(40px, -30px) scale(1.15); opacity: 1; }
+}
+
+@keyframes glow-drift-b {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 1; }
+  50% { transform: translate(-50px, 40px) scale(0.9); opacity: 0.75; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+.glow-a { animation: glow-drift-a 14s ease-in-out infinite; }
+.glow-b { animation: glow-drift-b 18s ease-in-out infinite; }
+.glow-pulse { animation: glow-pulse 5s ease-in-out infinite; }
+
+/* Hero particles (see HeroParticles.tsx) */
+@keyframes ember-rise {
+  0% { transform: translate(0, 0) scale(1); opacity: 0; }
+  10% { opacity: 1; }
+  70% { opacity: 0.8; }
+  100% { transform: translate(var(--drift), -560px) scale(0.3); opacity: 0; }
+}
+
+@keyframes snow-fall {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  85% { opacity: 0.9; }
+  100% { transform: translate(var(--drift), 640px) rotate(360deg); opacity: 0; }
+}
+
+.ember {
+  position: absolute;
+  bottom: -10px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, #ffe0a3, var(--color-fire-500));
+  box-shadow: 0 0 8px 2px rgb(247 148 29 / 0.7);
+  animation: ember-rise linear infinite;
+}
+
+.flake {
+  position: absolute;
+  top: -20px;
+  animation: snow-fall linear infinite;
+}
+
+.flake-dot {
+  border-radius: 9999px;
+  background: #e6f6ff;
+  box-shadow: 0 0 6px 1px rgb(124 200 242 / 0.6);
+}
+
+/* Service icon hover effects */
+@keyframes flicker {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.1, 0.94) rotate(-5deg); }
+  50% { transform: scale(0.95, 1.14) rotate(4deg); }
+  75% { transform: scale(1.06) rotate(-2deg); }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-18deg); }
+  75% { transform: rotate(18deg); }
+}
+
+@keyframes heat-up {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-3px) scale(1.12); }
+}
+
+@keyframes blow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px) scaleY(1.1); }
+}
+
+.icon-flicker { transform-origin: 50% 90%; }
+.group:hover .icon-flicker { animation: flicker 0.6s ease-in-out infinite; }
+.group:hover .icon-spin { animation: spin 2.5s linear infinite; }
+.group:hover .icon-spin-fast { animation: spin 0.8s linear infinite; }
+.group:hover .icon-wiggle { animation: wiggle 0.5s ease-in-out infinite; }
+.group:hover .icon-heat { animation: heat-up 0.9s ease-in-out infinite; }
+.group:hover .icon-blow { animation: blow 0.7s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .reveal[data-pending]:not([data-visible]) { opacity: 1; transform: none; }
+  .particles { display: none; }
+  html { scroll-behavior: auto; }
 }
